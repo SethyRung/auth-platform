@@ -1,6 +1,15 @@
 server:
   port: ${SERVER_PORT}
 
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: true
+    config-url: /api-docs
+  show-actuator: false
+
 springdotenv:
   directory: ..
 
@@ -32,3 +41,6 @@ spring:
       resourceserver:
         jwt:
           issuer-uri: ${SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI}
+
+  cors:
+    allowed-origins: ${SPRING_CORS_ALLOWED_ORIGINS}
