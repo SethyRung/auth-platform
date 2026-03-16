@@ -18,7 +18,7 @@ import java.util.List;
 @EnableMethodSecurity
 public class SecurityConfig {
 
-    @Value("${spring.cors.allowed-origins:http://localhost:5173,http://localhost:8080}")
+    @Value("${spring.cors.allowed-origins}")
     private String corsAllowedOrigins;
 
     @Bean

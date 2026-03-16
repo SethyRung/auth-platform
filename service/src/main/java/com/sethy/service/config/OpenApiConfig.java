@@ -16,7 +16,7 @@ import java.util.List;
 @Configuration
 public class OpenApiConfig {
 
-    @Value("${SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI}")
+    @Value("${spring.security.oauth2.resourceserver.jwt.issuer-uri}")
     private String issuerUri;
 
     @Bean
