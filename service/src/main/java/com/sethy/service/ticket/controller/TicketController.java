@@ -1,0 +1,121 @@
+package com.sethy.service.ticket.controller;
+
+import com.sethy.service.common.response.Response;
+import com.sethy.service.ticket.dto.CreateTicketRequest;
+import com.sethy.service.ticket.dto.TicketResponse;
+import com.sethy.service.ticket.dto.UpdateStatusRequest;
+import com.sethy.service.ticket.dto.UpdateTicketRequest;
+import com.sethy.service.ticket.service.TicketService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/tickets")
+@Tag(name = "Tickets")
+@SecurityRequirement(name = "bearerAuth")
+@RequiredArgsConstructor
+public class TicketController {
+
+    private final TicketService ticketService;
+
+    @GetMapping
+    @Operation(
+            description = "Retrieve all tickets in the system. ADMIN only."
+    )
+    public ResponseEntity<Response<List<TicketResponse>>> getAllTickets() {
+        List<TicketResponse> tickets = ticketService.getAllTickets();
+        return ResponseEntity.ok(Response.success(tickets));
+    }
+
+    @GetMapping("/my")
+    @Operation(
+            description = "Retrieve tickets created by the authenticated user."
+    )
+    public ResponseEntity<Response<List<TicketResponse>>> getMyTickets(Authentication authentication) {
+        String username = authentication.getName();
+        List<TicketResponse> tickets = ticketService.getMyTickets(username);
+        return ResponseEntity.ok(Response.success(tickets));
+    }
+
+    @GetMapping("/{id}")
+    @Operation(
+            description = "Retrieve a specific ticket by its ID."
+    )
+    public ResponseEntity<Response<TicketResponse>> getTicketById(
+            @Parameter(description = "Ticket ID", required = true)
+            @PathVariable Long id) {
+        TicketResponse ticket = ticketService.getTicketById(id);
+        return ResponseEntity.ok(Response.success(ticket));
+    }
+
+    @PostMapping
+    @Operation(
+            description = "Create a new ticket. The createdBy field is automatically set to the authenticated user."
+    )
+    public ResponseEntity<Response<TicketResponse>> createTicket(
+            @Valid @RequestBody CreateTicketRequest request,
+            Authentication authentication) {
+        String username = authentication.getName();
+        TicketResponse ticket = ticketService.createTicket(request, username);
+        return ResponseEntity.status(HttpStatus.CREATED).body(Response.success(ticket, "Ticket created successfully"));
+    }
+
+    @PutMapping("/{id}")
+    @Operation(
+            description = "Update any ticket with all fields including status. ADMIN only."
+    )
+    public ResponseEntity<Response<TicketResponse>> updateTicketAsAdmin(
+            @Parameter(description = "Ticket ID", required = true)
+            @PathVariable Long id,
+            @Valid @RequestBody UpdateTicketRequest request) {
+        TicketResponse ticket = ticketService.updateTicketAsAdmin(id, request);
+        return ResponseEntity.ok(Response.success(ticket, "Ticket updated successfully"));
+    }
+
+    @PatchMapping("/{id}")
+    @Operation(
+            description = "Update own ticket with title, description, priority. Cannot update status. Owner only."
+    )
+    public ResponseEntity<Response<TicketResponse>> updateTicketAsUser(
+            @Parameter(description = "Ticket ID", required = true)
+            @PathVariable Long id,
+            @RequestBody UpdateTicketRequest request,
+            Authentication authentication) {
+        String username = authentication.getName();
+        TicketResponse ticket = ticketService.updateTicketAsUser(id, request, username);
+        return ResponseEntity.ok(Response.success(ticket, "Ticket updated successfully"));
+    }
+
+    @PatchMapping("/{id}/status")
+    @Operation(
+            description = "Update ticket status. ADMIN only."
+    )
+    public ResponseEntity<Response<TicketResponse>> updateTicketStatus(
+            @Parameter(description = "Ticket ID", required = true)
+            @PathVariable Long id,
+            @Valid @RequestBody UpdateStatusRequest request) {
+        TicketResponse ticket = ticketService.updateTicketStatus(id, request);
+        return ResponseEntity.ok(Response.success(ticket, "Ticket status updated successfully"));
+    }
+
+    @DeleteMapping("/{id}")
+    @Operation(
+            description = "Delete a ticket by ID. ADMIN only."
+    )
+    public ResponseEntity<Response<Void>> deleteTicket(
+            @Parameter(description = "Ticket ID", required = true)
+            @PathVariable Long id) {
+        ticketService.deleteTicket(id);
+        return ResponseEntity.ok(Response.success(null, "Ticket deleted successfully"));
+    }
+}
