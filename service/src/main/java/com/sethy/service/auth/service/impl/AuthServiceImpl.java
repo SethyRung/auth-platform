@@ -13,7 +13,9 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
 import java.util.Base64;
+import java.util.List;
 
 @Service
 public class AuthServiceImpl implements AuthService {
@@ -132,10 +134,20 @@ public class AuthServiceImpl implements AuthService {
         if (token == null) throw new RuntimeException("No access token");
 
         JsonNode payload = decodeJwt(token);
+        List<String> roles = new ArrayList<>();
+        JsonNode rolesNode = payload.path("realm_access").path("roles");
+        if (rolesNode.isArray()) {
+            for (JsonNode role : rolesNode) {
+                if (role.isTextual()) {
+                    roles.add(role.asText());
+                }
+            }
+        }
+
         return new UserInfo(
                 payload.get("preferred_username").asText(),
                 payload.get("email").asText(),
-                payload.get("realm_access").get("roles")
+                roles
         );
     }
 }
