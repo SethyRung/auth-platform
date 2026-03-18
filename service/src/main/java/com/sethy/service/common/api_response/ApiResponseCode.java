@@ -1,6 +1,6 @@
-package com.sethy.service.common.response;
+package com.sethy.service.common.api_response;
 
-public enum ResponseCode {
+public enum ApiResponseCode {
     SUCCESS("SUCCESS"),
     ERROR("ERROR"),
     NOT_FOUND("NOT_FOUND"),
@@ -12,7 +12,7 @@ public enum ResponseCode {
 
     private final String code;
 
-    ResponseCode(String code) {
+    ApiResponseCode(String code) {
         this.code = code;
     }
 

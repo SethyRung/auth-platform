@@ -1,7 +1,7 @@
 package com.sethy.service.common.exception;
 
-import com.sethy.service.common.response.Response;
-import com.sethy.service.common.response.ResponseCode;
+import com.sethy.service.common.api_response.ApiResponse;
+import com.sethy.service.common.api_response.ApiResponseCode;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
@@ -20,41 +20,41 @@ import java.util.Map;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<Response<Map<String, String>>> handleIllegalArgumentException(
+    public ResponseEntity<ApiResponse<Map<String, String>>> handleIllegalArgumentException(
             IllegalArgumentException ex, WebRequest request) {
         Map<String, String> errorDetails = new HashMap<>();
         errorDetails.put("error", ex.getMessage());
-        Response<Map<String, String>> response = Response.error(ResponseCode.INVALID_REQUEST, ex.getMessage(), errorDetails);
+        ApiResponse<Map<String, String>> response = ApiResponse.error(ApiResponseCode.INVALID_REQUEST, ex.getMessage(), errorDetails);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
     @ExceptionHandler(AccessDeniedException.class)
-    public ResponseEntity<Response<Void>> handleAccessDeniedException(
+    public ResponseEntity<ApiResponse<Void>> handleAccessDeniedException(
             AccessDeniedException ex, WebRequest request) {
-        Response<Void> response = Response.error(ResponseCode.FORBIDDEN, "Access denied");
+        ApiResponse<Void> response = ApiResponse.error(ApiResponseCode.FORBIDDEN, "Access denied");
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
     }
 
     @ExceptionHandler(BadCredentialsException.class)
-    public ResponseEntity<Response<Void>> handleBadCredentialsException(
+    public ResponseEntity<ApiResponse<Void>> handleBadCredentialsException(
             BadCredentialsException ex, WebRequest request) {
-        Response<Void> response = Response.error(ResponseCode.UNAUTHORIZED, "Invalid credentials");
+        ApiResponse<Void> response = ApiResponse.error(ApiResponseCode.UNAUTHORIZED, "Invalid credentials");
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Response<Map<String, String>>> handleValidationExceptions(
+    public ResponseEntity<ApiResponse<Map<String, String>>> handleValidationExceptions(
             MethodArgumentNotValidException ex, WebRequest request) {
         Map<String, String> errors = new HashMap<>();
         ex.getBindingResult().getFieldErrors().forEach(error -> {
             errors.put(error.getField(), error.getDefaultMessage());
         });
-        Response<Map<String, String>> response = Response.error(ResponseCode.VALIDATION_ERROR, "Validation failed", errors);
+        ApiResponse<Map<String, String>> response = ApiResponse.error(ApiResponseCode.VALIDATION_ERROR, "Validation failed", errors);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<Response<Map<String, String>>> handleConstraintViolationException(
+    public ResponseEntity<ApiResponse<Map<String, String>>> handleConstraintViolationException(
             ConstraintViolationException ex, WebRequest request) {
         Map<String, String> errors = new HashMap<>();
         for (ConstraintViolation<?> violation : ex.getConstraintViolations()) {
@@ -62,14 +62,14 @@ public class GlobalExceptionHandler {
             String message = violation.getMessage();
             errors.put(property, message);
         }
-        Response<Map<String, String>> response = Response.error(ResponseCode.VALIDATION_ERROR, "Validation failed", errors);
+        ApiResponse<Map<String, String>> response = ApiResponse.error(ApiResponseCode.VALIDATION_ERROR, "Validation failed", errors);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<Response<Void>> handleGlobalException(
+    public ResponseEntity<ApiResponse<Void>> handleGlobalException(
             Exception ex, WebRequest request) {
-        Response<Void> response = Response.error(ResponseCode.INTERNAL_ERROR, "An unexpected error occurred");
+        ApiResponse<Void> response = ApiResponse.error(ApiResponseCode.INTERNAL_ERROR, "An unexpected error occurred");
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
 }

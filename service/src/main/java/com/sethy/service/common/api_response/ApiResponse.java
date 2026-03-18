@@ -1,4 +1,4 @@
-package com.sethy.service.common.response;
+package com.sethy.service.common.api_response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -9,7 +9,7 @@ import lombok.Setter;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Setter
 @Getter
-public class Response<T> {
+public class ApiResponse<T> {
 
     @Schema(description = "Response status information")
     private Status status;
@@ -20,47 +20,47 @@ public class Response<T> {
     @Schema(description = "Metadata for pagination or additional info")
     private Meta meta;
 
-    private Response() {}
+    private ApiResponse() {}
 
-    private Response(Status status, T data) {
+    private ApiResponse(Status status, T data) {
         this.status = status;
         this.data = data;
     }
 
-    private Response(Status status, T data, Meta meta) {
+    private ApiResponse(Status status, T data, Meta meta) {
         this.status = status;
         this.data = data;
         this.meta = meta;
     }
 
-    public static <T> Response<T> success(T data) {
-        Status status = new Status(ResponseCode.SUCCESS, "Success");
-        return new Response<>(status, data);
+    public static <T> ApiResponse<T> success(T data) {
+        Status status = new Status(ApiResponseCode.SUCCESS, "Success");
+        return new ApiResponse<>(status, data);
     }
 
-    public static <T> Response<T> success(T data, String message) {
-        Status status = new Status(ResponseCode.SUCCESS, message);
-        return new Response<>(status, data);
+    public static <T> ApiResponse<T> success(T data, String message) {
+        Status status = new Status(ApiResponseCode.SUCCESS, message);
+        return new ApiResponse<>(status, data);
     }
 
-    public static <T> Response<T> error(ResponseCode code, String message) {
+    public static <T> ApiResponse<T> error(ApiResponseCode code, String message) {
         Status status = new Status(code, message);
-        return new Response<>(status, null);
+        return new ApiResponse<>(status, null);
     }
 
-    public static <T> Response<T> error(ResponseCode code, String message, T data) {
+    public static <T> ApiResponse<T> error(ApiResponseCode code, String message, T data) {
         Status status = new Status(code, message);
-        return new Response<>(status, data);
+        return new ApiResponse<>(status, data);
     }
 
-    public static <T> Response<T> withMeta(T data, Meta meta) {
-        Status status = new Status(ResponseCode.SUCCESS, "Success");
-        return new Response<>(status, data, meta);
+    public static <T> ApiResponse<T> withMeta(T data, Meta meta) {
+        Status status = new Status(ApiResponseCode.SUCCESS, "Success");
+        return new ApiResponse<>(status, data, meta);
     }
 
-    public static <T> Response<T> withMeta(T data, Meta meta, String message) {
-        Status status = new Status(ResponseCode.SUCCESS, message);
-        return new Response<>(status, data, meta);
+    public static <T> ApiResponse<T> withMeta(T data, Meta meta, String message) {
+        Status status = new Status(ApiResponseCode.SUCCESS, message);
+        return new ApiResponse<>(status, data, meta);
     }
 
     @Schema(description = "Status information")
@@ -69,7 +69,7 @@ public class Response<T> {
     public static class Status {
 
         @Schema(description = "Response code", example = "SUCCESS")
-        private ResponseCode code;
+        private ApiResponseCode code;
 
         @Schema(description = "Human-readable message", example = "Success")
         private String message;
@@ -80,7 +80,7 @@ public class Response<T> {
         @Schema(description = "Request timestamp in milliseconds", example = "1642245600000")
         private long requestTime;
 
-        public Status(ResponseCode code, String message) {
+        public Status(ApiResponseCode code, String message) {
             this.code = code;
             this.message = message;
             this.requestId = generateRequestId();
