@@ -8,11 +8,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@RestController()
-@RequestMapping("/api")
+@RestController
+@RequestMapping("/api/ping")
 @Tag(name = "Health", description = "Health check endpoints")
 public class PingController {
-    @GetMapping("/ping")
+    @GetMapping
     @Operation(
             description = "Returns 'Pong' to verify API is running"
     )

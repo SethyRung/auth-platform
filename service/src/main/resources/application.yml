@@ -31,7 +31,15 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: ${SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI}
-
+          issuer-uri: ${SPRING_KEYCLOAK_BASE_URL}/realms/${SPRING_KEYCLOAK_REALM}
   cors:
     allowed-origins: ${SPRING_CORS_ALLOWED_ORIGINS}
+
+  web:
+    base-url: ${SPRING_WEB_BASE_URL}
+
+  keycloak:
+    base-url: ${SPRING_KEYCLOAK_BASE_URL}
+    realm: ${SPRING_KEYCLOAK_REALM}
+    client-id: ${SPRING_KEYCLOAK_CLIENT_ID}
+    redirect-url: ${SPRING_KEYCLOAK_REDIRECT_URL}

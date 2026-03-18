@@ -1,11 +1,18 @@
 package com.sethy.service.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sethy.service.common.api_response.ApiResponse;
+import com.sethy.service.common.api_response.ApiResponseCode;
+import jakarta.servlet.http.Cookie;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.MediaType;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.oauth2.server.resource.web.BearerTokenResolver;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -25,16 +32,30 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .csrf(csrf -> csrf.disable())
+                .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authz -> authz
-                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**")
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/api/ping", "/api/auth/**")
                             .permitAll()
-                        .requestMatchers("/api/ping")
-                            .permitAll()
-                        .anyRequest()
+                            .anyRequest()
                             .authenticated()
                 )
-                .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt.jwtAuthenticationConverter(customJwtAuthenticationConverter())));
+                .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint((request, response, authException) -> {
+                            ApiResponse<Void> body = ApiResponse.error(ApiResponseCode.UNAUTHORIZED, "Unauthorized");
+                            response.setStatus(200);
+                            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+                            response.getWriter().write(new ObjectMapper().writeValueAsString(body));
+                        })
+                        .accessDeniedHandler((request, response, accessDeniedException) -> {
+                            ApiResponse<Void> body = ApiResponse.error(ApiResponseCode.FORBIDDEN, "Access denied");
+                            response.setStatus(200);
+                            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+                            response.getWriter().write(new ObjectMapper().writeValueAsString(body));
+                        })
+                )
+                .oauth2ResourceServer(oauth2 -> oauth2
+                        .bearerTokenResolver(bearerTokenResolver())
+                        .jwt(jwt -> jwt.jwtAuthenticationConverter(customJwtAuthenticationConverter())));
 
         return http.build();
     }
@@ -43,7 +64,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(List.of(corsAllowedOrigins.split(",")));
-        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
 
@@ -55,5 +76,20 @@ public class SecurityConfig {
     @Bean
     public CustomJwtAuthenticationConverter customJwtAuthenticationConverter() {
         return new CustomJwtAuthenticationConverter();
+    }
+
+    @Bean
+    public BearerTokenResolver bearerTokenResolver() {
+        return request -> {
+            Cookie[] cookies = request.getCookies();
+            if (cookies != null) {
+                for (Cookie cookie : cookies) {
+                    if ("access_token".equals(cookie.getName()) && cookie.getValue() != null && !cookie.getValue().isBlank()) {
+                        return cookie.getValue();
+                    }
+                }
+            }
+            return null;
+        };
     }
 }

@@ -9,7 +9,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
+import java.util.LinkedHashSet;
+import java.util.Locale;
 import java.util.Map;
 
 @Component
@@ -17,40 +18,43 @@ public class CustomJwtAuthenticationConverter implements Converter<Jwt, Abstract
 
     @Override
     public AbstractAuthenticationToken convert(Jwt jwt) {
-        Collection authorities = extractAuthorities(jwt);
+        Collection<SimpleGrantedAuthority> authorities = extractAuthorities(jwt);
         return new JwtAuthenticationToken(jwt, authorities);
     }
 
-    @SuppressWarnings("unchecked")
-    private Collection extractAuthorities(Jwt jwt) {
-        Map<String, Object> realmAccess = jwt.getClaim("realm_access");
-        if (realmAccess instanceof Map) {
-            Map<String, Object> accessMap = (Map<String, Object>) realmAccess;
-            Object roles = accessMap.get("roles");
-            if (roles instanceof List) {
-                List<String> roleList = (List<String>) roles;
-                return roleList.stream()
-                        .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
-                        .toList();
-            }
+    private Collection<SimpleGrantedAuthority> extractAuthorities(Jwt jwt) {
+        LinkedHashSet<SimpleGrantedAuthority> authorities = new LinkedHashSet<>();
+
+        Object realmAccessClaim = jwt.getClaim("realm_access");
+        if (realmAccessClaim instanceof Map<?, ?> realmAccess) {
+            authorities.addAll(extractRoles(realmAccess.get("roles")));
         }
 
-        Map<String, Object> resourceAccess = jwt.getClaim("resource_access");
-        if (resourceAccess instanceof Map) {
-            Map<String, Object> resourceMap = (Map<String, Object>) resourceAccess;
-            Object account = resourceMap.get("account");
-            if (account instanceof Map) {
-                Map<String, Object> accountMap = (Map<String, Object>) account;
-                Object accountRoles = accountMap.get("roles");
-                if (accountRoles instanceof List) {
-                    List<String> roleList = (List<String>) accountRoles;
-                    return roleList.stream()
-                            .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
-                            .toList();
+        Object resourceAccessClaim = jwt.getClaim("resource_access");
+        if (resourceAccessClaim instanceof Map<?, ?> resourceAccess) {
+            for (Object clientClaim : resourceAccess.values()) {
+                if (clientClaim instanceof Map<?, ?> clientAccess) {
+                    authorities.addAll(extractRoles(clientAccess.get("roles")));
                 }
             }
         }
 
-        return Collections.emptyList();
+        if (authorities.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        return authorities;
+    }
+
+    private Collection<SimpleGrantedAuthority> extractRoles(Object rolesClaim) {
+        if (!(rolesClaim instanceof Collection<?> roles)) {
+            return Collections.emptyList();
+        }
+
+        return roles.stream()
+                .filter(String.class::isInstance)
+                .map(String.class::cast)
+                .map(role -> new SimpleGrantedAuthority("ROLE_" + role.toUpperCase(Locale.ROOT)))
+                .toList();
     }
 }

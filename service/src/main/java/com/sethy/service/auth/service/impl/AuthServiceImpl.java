@@ -1,0 +1,141 @@
+package com.sethy.service.auth.service.impl;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sethy.service.auth.dto.Tokens;
+import com.sethy.service.auth.dto.UserInfo;
+import com.sethy.service.auth.service.AuthService;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestTemplate;
+
+import java.util.Base64;
+
+@Service
+public class AuthServiceImpl implements AuthService {
+    @Value("${spring.keycloak.base-url}")
+    private String keycloakBaseUrl;
+    @Value("${spring.keycloak.realm}")
+    private String realm;
+    @Value("${spring.keycloak.client-id}")
+    private String clientId;
+    @Value("${spring.keycloak.redirect-url}")
+    private String redirectUrl;
+
+    private final RestTemplate restTemplate = new RestTemplate();
+    private final ObjectMapper objectMapper = new ObjectMapper();
+
+    public String buildLoginUrl() {
+        return keycloakBaseUrl + "/realms/" + realm +
+                "/protocol/openid-connect/auth" +
+                "?client_id=" + clientId +
+                "&response_type=code" +
+                "&scope=openid profile email" +
+                "&redirect_uri=" + redirectUrl;
+    }
+
+    public Tokens exchangeCodeForTokens(String code) throws Exception {
+        String tokenUrl = keycloakBaseUrl + "/realms/" + realm + "/protocol/openid-connect/token";
+
+        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+        body.add("grant_type", "authorization_code");
+        body.add("client_id", clientId);
+        body.add("code", code);
+        body.add("redirect_uri", redirectUrl);
+
+        String response = restTemplate.postForObject(tokenUrl, body, String.class);
+
+        JsonNode node = objectMapper.readTree(response);
+        return new Tokens(
+                node.get("access_token").asText(),
+                node.get("refresh_token").asText(),
+                node.get("expires_in").asInt(),
+                node.get("refresh_expires_in").asInt()
+        );
+    }
+
+    public Tokens refreshToken(HttpServletRequest request) throws Exception {
+        Cookie[] cookies = request.getCookies();
+        String refreshToken = null;
+        if (cookies != null) {
+            for (Cookie c : cookies) {
+                if ("refresh_token".equals(c.getName())) {
+                    refreshToken = c.getValue();
+                }
+            }
+        }
+
+        if (refreshToken == null) throw new RuntimeException("No refresh token");
+
+        String tokenUrl = keycloakBaseUrl + "/realms/" + realm + "/protocol/openid-connect/token";
+
+        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+        body.add("grant_type", "refresh_token");
+        body.add("client_id", clientId);
+        body.add("refresh_token", refreshToken);
+
+        String response = restTemplate.postForObject(tokenUrl, body, String.class);
+
+        JsonNode node = objectMapper.readTree(response);
+        return new Tokens(
+                node.get("access_token").asText(),
+                node.get("refresh_token").asText(),
+                node.get("expires_in").asInt(),
+                node.get("refresh_expires_in").asInt()
+        );
+    }
+
+    public void logout(HttpServletRequest request) throws Exception {
+        Cookie[] cookies = request.getCookies();
+        String refreshToken = null;
+        if (cookies != null) {
+            for (Cookie c : cookies) {
+                if ("refresh_token".equals(c.getName())) {
+                    refreshToken = c.getValue();
+                }
+            }
+        }
+
+        if (refreshToken == null || refreshToken.isBlank()) {
+            throw new RuntimeException("No refresh token");
+        }
+
+        String logoutUrl = keycloakBaseUrl + "/realms/" + realm + "/protocol/openid-connect/logout";
+        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+        body.add("client_id", clientId);
+        body.add("refresh_token", refreshToken);
+
+        restTemplate.postForObject(logoutUrl, body, String.class);
+    }
+
+    private JsonNode decodeJwt(String jwt) throws Exception {
+        String[] parts = jwt.split("\\.");
+        if (parts.length != 3) throw new RuntimeException("Invalid JWT");
+
+        String payload = new String(Base64.getUrlDecoder().decode(parts[1]));
+        return objectMapper.readTree(payload);
+    }
+
+    public UserInfo getCurrentUser(HttpServletRequest request) throws Exception {
+        String token = null;
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie c : cookies) {
+                if ("access_token".equals(c.getName())) token = c.getValue();
+            }
+        }
+
+        if (token == null) throw new RuntimeException("No access token");
+
+        JsonNode payload = decodeJwt(token);
+        return new UserInfo(
+                payload.get("preferred_username").asText(),
+                payload.get("email").asText(),
+                payload.get("realm_access").get("roles")
+        );
+    }
+}

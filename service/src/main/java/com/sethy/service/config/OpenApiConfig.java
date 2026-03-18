@@ -7,7 +7,6 @@ import io.swagger.v3.oas.models.info.License;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.security.SecurityScheme.Type;
 import io.swagger.v3.oas.models.servers.Server;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -16,18 +15,13 @@ import java.util.List;
 @Configuration
 public class OpenApiConfig {
 
-    @Value("${spring.security.oauth2.resourceserver.jwt.issuer-uri}")
-    private String issuerUri;
-
     @Bean
     public OpenAPI customOpenAPI() {
         SecurityScheme bearerAuth = new SecurityScheme()
-                .type(Type.HTTP)
-                .scheme("bearer")
-                .bearerFormat("JWT")
-                .description("OAuth2 JWT Bearer Token")
-                .in(SecurityScheme.In.HEADER)
-                .name("Authorization");
+                .type(Type.APIKEY)
+                .in(SecurityScheme.In.COOKIE)
+                .name("access_token")
+                .description("JWT cookie set by /api/auth/callback");
 
         return new OpenAPI()
                 .info(new Info()
