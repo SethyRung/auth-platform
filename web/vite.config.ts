@@ -8,7 +8,7 @@ import tailwindcss from "@tailwindcss/vite";
 import ui from "@nuxt/ui/vite";
 
 export default defineConfig({
-  envDir: "..",
+  envDir: process.env.VITE_ENV_DIR ?? "..",
   plugins: [vue(), vueDevTools(), tailwindcss(), ui()],
   resolve: {
     alias: {
