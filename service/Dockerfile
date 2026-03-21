@@ -1,5 +1,5 @@
 # Build stage
-FROM gradle:8.14-jdk21-alpine AS build
+FROM gradle:8.14-jdk25-alpine AS build
 WORKDIR /app
 
 # Copy only Gradle files first (better caching)
@@ -16,7 +16,7 @@ COPY src ./src
 RUN gradle bootJar --no-daemon -x test
 
 # Runtime stage
-FROM eclipse-temurin:21-jre-alpine
+FROM eclipse-temurin:25-jre-alpine
 WORKDIR /app
 
 # Create non-root user
