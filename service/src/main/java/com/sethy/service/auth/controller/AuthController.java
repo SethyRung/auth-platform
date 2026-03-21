@@ -4,6 +4,7 @@ import com.sethy.service.auth.dto.Tokens;
 import com.sethy.service.auth.dto.UserInfo;
 import com.sethy.service.auth.service.AuthService;
 import com.sethy.service.common.api_response.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -73,6 +74,7 @@ public class AuthController {
     }
 
     @GetMapping("/me")
+    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<ApiResponse<UserInfo>> me(HttpServletRequest request) throws Exception {
         UserInfo user = authService.getCurrentUser(request);
         return ResponseEntity.ok(ApiResponse.success(user));
