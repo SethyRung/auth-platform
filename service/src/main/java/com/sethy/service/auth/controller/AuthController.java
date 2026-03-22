@@ -80,6 +80,12 @@ public class AuthController {
         return ResponseEntity.ok(ApiResponse.success(user));
     }
 
+    @GetMapping("/check-authenticated")
+    public ResponseEntity<ApiResponse<Boolean>> checkAuthenticated(HttpServletRequest request) {
+        boolean isAuthenticated = authService.checkAuth(request);
+        return ResponseEntity.ok(ApiResponse.success(isAuthenticated));
+    }
+
     private void setTokenCookies(HttpServletResponse response, Tokens tokens) {
         ResponseCookie accessCookie = ResponseCookie.from("access_token", tokens.getAccessToken())
                                         .httpOnly(true)

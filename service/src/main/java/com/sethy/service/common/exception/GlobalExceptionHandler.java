@@ -18,6 +18,13 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    @ExceptionHandler(UnauthorizedException.class)
+    public ResponseEntity<ApiResponse<Void>> handleUnauthorizedException(
+            UnauthorizedException ex, WebRequest request) {
+        ApiResponse<Void> response = ApiResponse.error(ApiResponseCode.UNAUTHORIZED, ex.getMessage());
+        return ResponseEntity.ok(response);
+    }
+
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ApiResponse<Map<String, String>>> handleIllegalArgumentException(
             IllegalArgumentException ex, WebRequest request) {

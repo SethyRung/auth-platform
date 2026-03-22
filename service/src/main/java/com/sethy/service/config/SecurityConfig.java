@@ -34,7 +34,7 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authz -> authz
-                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/api/ping", "/api/auth/login", "/api/auth/callback", "/api/auth/refresh", "/api/auth/logout")
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/api/ping", "/api/auth/login", "/api/auth/callback", "/api/auth/check-authenticated", "/api/auth/refresh", "/api/auth/logout")
                             .permitAll()
                             .anyRequest()
                             .authenticated()

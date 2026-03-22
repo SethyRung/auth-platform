@@ -5,9 +5,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sethy.service.auth.dto.Tokens;
 import com.sethy.service.auth.dto.UserInfo;
 import com.sethy.service.auth.service.AuthService;
+import com.sethy.service.common.exception.UnauthorizedException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -18,6 +22,7 @@ import java.util.Base64;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
     @Value("${spring.keycloak.base-url}")
     private String keycloakBaseUrl;
@@ -30,6 +35,7 @@ public class AuthServiceImpl implements AuthService {
 
     private final RestTemplate restTemplate = new RestTemplate();
     private final ObjectMapper objectMapper = new ObjectMapper();
+    private final JwtDecoder jwtDecoder;
 
     public String buildLoginUrl() {
         return keycloakBaseUrl + "/realms/" + realm +
@@ -123,15 +129,8 @@ public class AuthServiceImpl implements AuthService {
     }
 
     public UserInfo getCurrentUser(HttpServletRequest request) throws Exception {
-        String token = null;
-        Cookie[] cookies = request.getCookies();
-        if (cookies != null) {
-            for (Cookie c : cookies) {
-                if ("access_token".equals(c.getName())) token = c.getValue();
-            }
-        }
-
-        if (token == null) throw new RuntimeException("No access token");
+        String token = extractAccessToken(request);
+        if (token == null || token.isBlank()) throw new RuntimeException("No access token");
 
         JsonNode payload = decodeJwt(token);
         List<String> roles = new ArrayList<>();
@@ -149,5 +148,38 @@ public class AuthServiceImpl implements AuthService {
                 payload.get("email").asText(),
                 roles
         );
+    }
+
+    public boolean checkAuth(HttpServletRequest request) {
+        String token = extractAccessToken(request);
+        if (token == null || token.isBlank()) throw new UnauthorizedException("No access token provided");
+
+        Jwt jwt = jwtDecoder.decode(token);
+        if (jwt == null) {
+            return false;
+        }
+
+        java.time.Instant expiresAt = jwt.getExpiresAt();
+        if (expiresAt == null) {
+            return false;
+        }
+
+        if (expiresAt.isBefore(java.time.Instant.now())) {
+            throw new UnauthorizedException("Token has expired");
+        }
+
+        return true;
+    }
+
+    private String extractAccessToken(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if ("access_token".equals(cookie.getName())) {
+                    return cookie.getValue();
+                }
+            }
+        }
+        return null;
     }
 }
