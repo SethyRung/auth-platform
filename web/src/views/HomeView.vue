@@ -1,16 +1,24 @@
 <script setup lang="ts">
-import { computed, h, onMounted, ref } from "vue";
-import { useRouter } from "vue-router";
+import { computed, onMounted, ref } from "vue";
+import { useRouter, useRoute } from "vue-router";
 
 import { useAuthStore } from "@/stores/auth";
 
-import type { DropdownMenuItem, NavigationMenuItem } from "@nuxt/ui";
+import type { NavigationMenuItem } from "@nuxt/ui";
+import { Role } from "@/types";
 
 const router = useRouter();
+const route = useRoute();
 const authStore = useAuthStore();
 
 onMounted(async () => {
-  await authStore.initialize();
+  if (!authStore.user) {
+    return;
+  } else if (authStore.user.roles.includes(Role.Admin)) {
+    router.push("/dashboard");
+  } else {
+    router.push("/tickets");
+  }
 });
 
 const search = ref("");
@@ -21,15 +29,14 @@ const sidebarItems = computed<NavigationMenuItem[]>(() => [
         {
           label: "Dashboard",
           icon: "i-lucide-layout-dashboard",
-          click: () => router.push("/dashboard"),
+          to: "/dashboard",
         },
       ]
     : []),
   {
     label: "My Tickets",
     icon: "i-lucide-ticket",
-    active: true,
-    click: () => router.push("/tickets"),
+    to: "/tickets",
   },
   {
     label: "Department Tickets",
@@ -45,27 +52,29 @@ const sidebarItems = computed<NavigationMenuItem[]>(() => [
     : []),
 ]);
 
-const userMenuItems = ref<DropdownMenuItem[][]>([
-  [
-    {
-      label: "GitHub",
-      icon: "i-simple-icons:github",
-      to: "https://github.com/SethyRung/auth-platform",
-      target: "_blank",
-    },
-    {
-      label: "Support",
-      icon: "i-lucide-life-buoy",
-    },
-  ],
-  [
-    {
-      label: "Logout",
-      icon: "i-lucide-log-out",
-      color: "error",
-      onSelect: authStore.logout,
-    },
-  ],
+const navbarTitle = computed(() => {
+  const match = sidebarItems.value.find(
+    (i) => typeof i.to === "string" && route.path.startsWith(i.to),
+  );
+  return match?.label ?? "";
+});
+
+const userMenuItems = ref<NavigationMenuItem[]>([
+  {
+    label: "GitHub",
+    icon: "i-simple-icons:github",
+    to: "https://github.com/SethyRung/auth-platform",
+    target: "_blank",
+  },
+  {
+    label: "Support",
+    icon: "i-lucide:circle-help",
+  },
+  {
+    label: "Logout",
+    icon: "i-lucide-log-out",
+    onSelect: authStore.logout,
+  },
 ]);
 </script>
 
@@ -92,27 +101,24 @@ const userMenuItems = ref<DropdownMenuItem[][]>([
           />
 
           <UNavigationMenu :collapsed="collapsed" :items="sidebarItems" orientation="vertical" />
+
+          <div class="flex-1"></div>
+
+          <UNavigationMenu :collapsed="collapsed" :items="userMenuItems" orientation="vertical" />
         </template>
 
         <template #footer="{ collapsed }">
-          <UDropdownMenu
-            :items="userMenuItems"
-            :content="{
-              side: 'right',
+          <UUser
+            :name="authStore.user?.username"
+            :avatar="{
+              src: '',
+              loading: 'lazy',
             }"
-          >
-            <UUser
-              :name="authStore.user?.username"
-              :avatar="{
-                src: '',
-                loading: 'lazy',
-              }"
-              :ui="{
-                root: 'flex-1',
-                wrapper: collapsed ? 'hidden' : '',
-              }"
-            />
-          </UDropdownMenu>
+            :ui="{
+              root: 'flex-1',
+              wrapper: collapsed ? 'hidden' : '',
+            }"
+          />
         </template>
       </UDashboardSidebar>
 
@@ -122,7 +128,7 @@ const userMenuItems = ref<DropdownMenuItem[][]>([
         }"
       >
         <template #header>
-          <UDashboardNavbar title="My Tickets">
+          <UDashboardNavbar :title="navbarTitle">
             <template #leading>
               <UDashboardSidebarCollapse variant="ghost" />
             </template>
