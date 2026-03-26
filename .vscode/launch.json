@@ -1,0 +1,14 @@
+{
+  "version": "0.1.0",
+  "configurations": [
+    {
+      "type": "java",
+      "name": "Launch Service (cwd=service)",
+      "request": "launch",
+      "mainClass": "com.sethy.service.ServiceApplication",
+      "cwd": "${workspaceFolder}/service",
+      "envFile": "${workspaceFolder}/.env",
+      "console": "integratedTerminal"
+    }
+  ]
+}
