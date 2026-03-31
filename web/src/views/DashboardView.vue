@@ -1,15 +1,22 @@
 <script setup lang="ts">
 import { computed, h, ref, resolveComponent } from "vue";
+import { useRouter } from "vue-router";
 
-import type { TableColumn } from "@nuxt/ui";
+import type { TableColumn, TableRow } from "@nuxt/ui";
 import type { Ticket } from "@/types/ticket";
 
 const UBadge = resolveComponent("UBadge");
 import CreateTicketModal from "@/components/CreateTicketModal.vue";
 import { getPriorityColor, getStatusColor } from "@/utils/color";
 
+const router = useRouter();
+
 function onTicketCreated(ticket: Ticket) {
   tickets.value.unshift(ticket);
+}
+
+function onSelect(_e: Event, row: TableRow<Ticket>) {
+  router.push({ name: "ticket-details", params: { id: row.id } });
 }
 
 // TODO: Replace with actual API call to fetch user's tickets
@@ -190,7 +197,13 @@ const columns = computed<TableColumn<Ticket>[]>(() => [
       </div>
 
       <UCard>
-        <UTable :data="tickets" :columns="columns" sticky="header" />
+        <UTable
+          :data="tickets"
+          :columns="columns"
+          sticky="header"
+          @select="onSelect"
+          :ui="{ tbody: 'cursor-pointer' }"
+        />
       </UCard>
     </div>
   </div>

@@ -16,7 +16,20 @@ import { TextAlign } from "@tiptap/extension-text-align";
 import { CodeBlockShiki } from "tiptap-extension-code-block-shiki";
 import EditorLinkPopover from "./EditorLinkPopover.vue";
 
-const value = ref("");
+const props = withDefaults(
+  defineProps<{
+    placeholder?: string;
+    disabled?: boolean;
+    editable?: boolean;
+  }>(),
+  {
+    placeholder: "Write, type '/' for commands...",
+    disabled: false,
+    editable: true,
+  },
+);
+
+const value = defineModel<string>({ default: "" });
 
 const bubbleToolbarItems = computed(
   () =>
@@ -334,6 +347,7 @@ const emojiItems: EditorEmojiMenuItem[] = gitHubEmojis.filter(
     v-slot="{ editor, handlers }"
     v-model="value"
     content-type="markdown"
+    :editable="editable && !disabled"
     :extensions="[
       Emoji,
       TextAlign.configure({ types: ['heading', 'paragraph'] }),
@@ -345,7 +359,7 @@ const emojiItems: EditorEmojiMenuItem[] = gitHubEmojis.filter(
         },
       }),
     ]"
-    placeholder="Write, type '/' for commands..."
+    :placeholder="placeholder"
     :ui="{ root: 'w-full' }"
   >
     <UEditorToolbar
