@@ -14,7 +14,13 @@ const authStore = useAuthStore();
 onMounted(async () => {
   if (!authStore.user) {
     return;
-  } else if (authStore.user.roles.includes(Role.Admin)) {
+  }
+
+  if (route.path !== "/") {
+    return;
+  }
+
+  if (authStore.user.roles.includes(Role.Admin)) {
     router.push("/dashboard");
   } else {
     router.push("/tickets");
