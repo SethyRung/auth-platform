@@ -9,6 +9,7 @@
 .DS_Store
 Thumbs.db
 
-# CLAUDE
-.claude/
+.github
+AGENTS.md
+.claude
 CLAUDE.md

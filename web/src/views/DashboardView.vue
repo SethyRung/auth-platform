@@ -5,7 +5,14 @@ import type { TableColumn } from "@nuxt/ui";
 import type { Ticket } from "@/types/ticket";
 
 const UBadge = resolveComponent("UBadge");
+import CreateTicketModal from "@/components/CreateTicketModal.vue";
+import { getPriorityColor, getStatusColor } from "@/utils/color";
 
+function onTicketCreated(ticket: Ticket) {
+  tickets.value.unshift(ticket);
+}
+
+// TODO: Replace with actual API call to fetch user's tickets
 const tickets = ref<Ticket[]>([
   {
     id: 19,
@@ -129,37 +136,12 @@ const columns = computed<TableColumn<Ticket>[]>(() => [
         {},
       ),
   },
+  {
+    accessorKey: "createdAt",
+    header: "Created At",
+    cell: ({ row }) => new Date(row.original.createdAt).toLocaleDateString(),
+  },
 ]);
-
-function getPriorityColor(priority: string) {
-  switch (priority) {
-    case "URGENT":
-      return "error";
-    case "HIGH":
-      return "warning";
-    case "MEDIUM":
-      return "info";
-    case "LOW":
-      return "neutral";
-    default:
-      return "neutral";
-  }
-}
-
-function getStatusColor(status: string) {
-  switch (status) {
-    case "OPEN":
-      return "info";
-    case "IN_PROGRESS":
-      return "warning";
-    case "RESOLVED":
-      return "success";
-    case "CLOSED":
-      return "neutral";
-    default:
-      return "neutral";
-  }
-}
 </script>
 
 <template>
@@ -195,7 +177,9 @@ function getStatusColor(status: string) {
         <h2 class="text-lg font-semibold">Recent Tickets</h2>
 
         <div class="flex gap-2">
-          <UButton label="Create Ticket" icon="i-lucide-plus" />
+          <CreateTicketModal @created="onTicketCreated">
+            <UButton label="Create Ticket" icon="i-lucide-plus" color="primary" />
+          </CreateTicketModal>
           <UButton
             label="View All"
             trailing-icon="i-lucide-arrow-right"
