@@ -5,9 +5,11 @@ import { useRouter } from "vue-router";
 import type { TableColumn, TableRow } from "@nuxt/ui";
 import type { Ticket } from "@/types/ticket";
 
-const UBadge = resolveComponent("UBadge");
 import CreateTicketModal from "@/components/CreateTicketModal.vue";
 import { getPriorityColor, getStatusColor } from "@/utils/color";
+import { formatFullDate } from "@/utils/date";
+
+const UBadge = resolveComponent("UBadge");
 
 const router = useRouter();
 
@@ -146,7 +148,7 @@ const columns = computed<TableColumn<Ticket>[]>(() => [
   {
     accessorKey: "createdAt",
     header: "Created At",
-    cell: ({ row }) => new Date(row.original.createdAt).toLocaleDateString(),
+    cell: ({ row }) => formatFullDate(row.original.createdAt),
   },
 ]);
 </script>
