@@ -3,9 +3,9 @@ export interface KeycloakData {
   realm: {
     name: string;
     displayName: string;
-    rememberMe: boolean;
-    resetPasswordAllowed: boolean;
-    registrationAllowed: boolean;
+    rememberMe?: boolean;
+    resetPasswordAllowed?: boolean;
+    registrationAllowed?: boolean;
     registrationEmailAsUsername?: boolean;
   };
   messages: Record<string, string>;

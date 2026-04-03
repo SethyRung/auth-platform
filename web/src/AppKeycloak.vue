@@ -3,6 +3,7 @@ import { computed, onMounted, ref } from "vue";
 import type { KeycloakData } from "@/types/keycloak";
 
 import LoginView from "@/views/auth/LoginView.vue";
+import RegisterView from "@/views/auth/RegisterView.vue";
 
 const kcData = ref<KeycloakData | null>(null);
 
@@ -19,6 +20,8 @@ const currentView = computed(() => {
   switch (page) {
     case "login":
       return LoginView;
+    case "register":
+      return RegisterView;
     default:
       return LoginView;
   }
