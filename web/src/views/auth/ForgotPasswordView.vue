@@ -11,16 +11,12 @@ const props = defineProps<{
 
 const schema = z.object({
   username: z.string("Username is required"),
-  password: z.string("Password is required").min(8, "Must be at least 8 characters"),
-  rememberMe: z.boolean().optional().default(false),
 });
 
 type Schema = z.output<typeof schema>;
 
 const state = reactive<Partial<Schema>>({
   username: undefined,
-  password: undefined,
-  rememberMe: false,
 });
 
 const loading = ref(false);
@@ -32,7 +28,7 @@ function onSubmit(event: FormSubmitEvent<Schema>) {
 
   const form = document.createElement("form");
   form.method = "POST";
-  form.action = props.kcData.urls.loginAction;
+  form.action = props.kcData.urls.resetPasswordAction;
 
   Object.entries(data).forEach(([key, value]) => {
     const input = document.createElement("input");
@@ -55,16 +51,16 @@ function onSubmit(event: FormSubmitEvent<Schema>) {
       <div class="flex items-center gap-2">
         <UIcon name="i-lucide-life-buoy" :size="20" />
 
-        <h1 class="text-xl font-semibold">{{ kcData.realm.displayName }}</h1>
+        <h1 class="text-xl font-semibold">Reset Password</h1>
       </div>
-      <p class="mt-2 text-toned">Sign in to your account</p>
+      <p class="mt-2 text-toned">Enter your username or email to receive a password reset link</p>
     </template>
 
     <UAlert
       v-if="kcData.errors.hasError"
       color="error"
       variant="soft"
-      :title="String(kcData.errors.username || kcData.errors.password || 'Invalid credentials')"
+      :title="String(kcData.errors.username || 'An error occurred')"
       class="mb-4"
     />
 
@@ -78,38 +74,15 @@ function onSubmit(event: FormSubmitEvent<Schema>) {
         />
       </UFormField>
 
-      <UFormField :label="kcData.messages.password" name="password" required>
-        <UInput
-          v-model="state.password"
-          :placeholder="kcData.messages.password"
-          size="xl"
-          type="password"
-          class="w-full"
-        />
-      </UFormField>
+      <UButton :label="kcData.messages.doSubmit" size="xl" type="submit" block :loading="loading" />
 
-      <div v-if="kcData.realm.rememberMe" class="flex items-center">
-        <UCheckbox v-model="state.rememberMe" :label="kcData.messages.rememberMe" />
-      </div>
-
-      <UButton :label="kcData.messages.doLogin" size="xl" type="submit" block :loading="loading" />
-
-      <div v-if="kcData.realm.resetPasswordAllowed" class="text-center">
+      <div class="text-center text-sm">
+        <span class="text-gray-600 dark:text-gray-400"> Remember password? </span>
         <a
-          :href="kcData.urls.forgotPassword"
-          class="text-sm text-primary-600 hover:text-primary-500 dark:text-primary-400 underline"
-        >
-          Forgot password?
-        </a>
-      </div>
-
-      <div v-if="kcData.realm.registrationAllowed" class="text-center text-sm">
-        <span class="text-gray-600 dark:text-gray-400"> Don't have an account? </span>
-        <a
-          :href="kcData.urls.register"
+          :href="kcData.urls.loginUrl"
           class="ml-1 font-medium text-primary-600 hover:text-primary-500 dark:text-primary-400 underline"
         >
-          Sign Up
+          Sign in
         </a>
       </div>
     </UForm>

@@ -41,7 +41,7 @@ const loading = ref(false);
 function onSubmit(event: FormSubmitEvent<Schema>) {
   loading.value = true;
 
-  const data = event.data;
+  const { data } = event;
 
   const form = document.createElement("form");
   form.method = "POST";

@@ -4,6 +4,9 @@ import type { KeycloakData } from "@/types/keycloak";
 
 import LoginView from "@/views/auth/LoginView.vue";
 import RegisterView from "@/views/auth/RegisterView.vue";
+import ForgotPasswordView from "@/views/auth/ForgotPasswordView.vue";
+import UpdatePasswordView from "@/views/auth/UpdatePasswordView.vue";
+
 import type { NavigationMenuItem } from "@nuxt/ui";
 
 const kcData = ref<KeycloakData | null>();
@@ -15,6 +18,10 @@ const currentView = computed(() => {
       return LoginView;
     case "register":
       return RegisterView;
+    case "forgot-password":
+      return ForgotPasswordView;
+    case "update-password":
+      return UpdatePasswordView;
     default:
       return LoginView;
   }
@@ -90,6 +97,61 @@ const items = computed<NavigationMenuItem[]>(() => [
             "http://localhost:8080/realms/auth-platform/login-actions/registration?session_code=B_G4RIJEZICsOXKLbnZ-jZt3J3tJRZVFrFGXjfu8W8E&amp;execution=18fd358a-0cbd-4c0a-9104-cc52d4e22b19&amp;client_id=auth-platform-client&amp;tab_id=GSCHUqYrKjk&amp;client_data=eyJydSI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMC9hcGkvYXV0aC9jYWxsYmFjayIsInJ0IjoiY29kZSJ9",
           loginUrl:
             "/realms/auth-platform/login-actions/authenticate?client_id=auth-platform-client&amp;tab_id=GSCHUqYrKjk&amp;client_data=eyJydSI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMC9hcGkvYXV0aC9jYWxsYmFjayIsInJ0IjoiY29kZSJ9",
+        },
+      };
+    },
+  },
+  {
+    label: "Forgot Password",
+    active: kcData.value?.page === "forgot-password",
+    onSelect: () => {
+      kcData.value = {
+        page: "forgot-password",
+        realm: {
+          name: "helpdesk",
+          displayName: "Helpdesk",
+        },
+        messages: {
+          username: "Username or email",
+          doSubmit: "Submit",
+          backToLogin: "« Back to Login",
+        },
+        errors: {
+          hasError: false,
+          username: "",
+        },
+        urls: {
+          resetPasswordAction:
+            "http://localhost:8080/realms/helpdesk/login-actions/reset-credentials?session_code=rWCuanTnhKXYcoGLXeRvfnNCdPixWOorKlom6irZBus&amp;execution=2097d188-7d1b-4b9b-8670-946059df7343&amp;client_id=helpdesk-client&amp;tab_id=A28MaTAS_PU&amp;client_data=eyJydSI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMC9hcGkvYXV0aC9jYWxsYmFjayIsInJ0IjoiY29kZSJ9",
+          loginUrl:
+            "/realms/helpdesk/login-actions/authenticate?client_id=helpdesk-client&amp;tab_id=A28MaTAS_PU&amp;client_data=eyJydSI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMC9hcGkvYXV0aC9jYWxsYmFjayIsInJ0IjoiY29kZSJ9",
+        },
+      };
+    },
+  },
+  {
+    label: "Update Password",
+    active: kcData.value?.page === "update-password",
+    onSelect: () => {
+      kcData.value = {
+        page: "update-password",
+        realm: {
+          name: "helpdesk",
+          displayName: "Helpdesk",
+        },
+        messages: {
+          passwordNew: "New Password",
+          passwordConfirm: "Confirm password",
+          doSubmit: "Submit",
+        },
+        errors: {
+          hasError: false,
+          password: "",
+          passwordConfirm: "",
+        },
+        urls: {
+          updatePasswordAction:
+            "http://localhost:8080/realms/helpdesk/login-actions/required-action?session_code=eNn30i7TavhC-SIlwiHAXKtGYeP5pvL1tQijE4R3mx4&amp;execution=UPDATE_PASSWORD&amp;client_id=helpdesk-client&amp;tab_id=CiyvFOerZYQ&amp;client_data=eyJydSI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMC9hcGkvYXV0aC9jYWxsYmFjayIsInJ0IjoiY29kZSJ9",
         },
       };
     },
