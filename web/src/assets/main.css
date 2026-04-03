@@ -1,2 +1,9 @@
+@import url("https://fonts.googleapis.com/css2?family=Geist+Mono:wght@100..900&family=Geist:wght@100..900&display=swap");
+
 @import "tailwindcss";
 @import "@nuxt/ui";
+
+@theme static {
+  --font-sans: "Geist", sans-serif;
+  --font-mono: "Geist Mono", sans-serif;
+}
