@@ -6,6 +6,7 @@ import LoginView from "@/views/auth/LoginView.vue";
 import RegisterView from "@/views/auth/RegisterView.vue";
 import ForgotPasswordView from "@/views/auth/ForgotPasswordView.vue";
 import UpdatePasswordView from "@/views/auth/UpdatePasswordView.vue";
+import VerifyEmailView from "@/views/auth/VerifyEmailView.vue";
 
 const kcData = ref<KeycloakData | null>(null);
 
@@ -28,6 +29,8 @@ const currentView = computed(() => {
       return ForgotPasswordView;
     case "update-password":
       return UpdatePasswordView;
+    case "verify-email":
+      return VerifyEmailView;
     default:
       return LoginView;
   }

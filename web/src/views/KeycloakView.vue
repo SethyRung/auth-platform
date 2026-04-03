@@ -6,6 +6,7 @@ import LoginView from "@/views/auth/LoginView.vue";
 import RegisterView from "@/views/auth/RegisterView.vue";
 import ForgotPasswordView from "@/views/auth/ForgotPasswordView.vue";
 import UpdatePasswordView from "@/views/auth/UpdatePasswordView.vue";
+import VerifyEmailView from "@/views/auth/VerifyEmailView.vue";
 
 import type { NavigationMenuItem } from "@nuxt/ui";
 
@@ -22,6 +23,8 @@ const currentView = computed(() => {
       return ForgotPasswordView;
     case "update-password":
       return UpdatePasswordView;
+    case "verify-email":
+      return VerifyEmailView;
     default:
       return LoginView;
   }
@@ -158,6 +161,34 @@ const items = computed<NavigationMenuItem[]>(() => [
         urls: {
           updatePasswordAction:
             "http://localhost:8080/realms/helpdesk/login-actions/required-action?session_code=eNn30i7TavhC-SIlwiHAXKtGYeP5pvL1tQijE4R3mx4&amp;execution=UPDATE_PASSWORD&amp;client_id=helpdesk-client&amp;tab_id=CiyvFOerZYQ&amp;client_data=eyJydSI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMC9hcGkvYXV0aC9jYWxsYmFjayIsInJ0IjoiY29kZSJ9",
+        },
+      };
+    },
+  },
+  {
+    label: "Verify Email",
+    active: kcData.value?.page === "verify-email",
+    onSelect: () => {
+      kcData.value = {
+        page: "verify-email",
+        realm: {
+          name: "helpdesk",
+          displayName: "Helpdesk",
+        },
+        meta: {},
+        messages: {
+          email: "rungsethyhk@gmail.com",
+          doResend: "Resend email",
+          backToLogin: "« Back to Login",
+        },
+        errors: {
+          hasError: false,
+        },
+        urls: {
+          resendEmailAction:
+            "http://localhost:8080/realms/helpdesk/login-actions/required-action?session_code=6tuoL_Nk1Dt2fgcKP5shjKvOuurHf6_uS4u-xD1FGFI&amp;execution=VERIFY_EMAIL&amp;client_id=helpdesk-client&amp;tab_id=h2VGnFBfDaM&amp;client_data=eyJydSI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMC9hcGkvYXV0aC9jYWxsYmFjayIsInJ0IjoiY29kZSJ9",
+          loginUrl:
+            "/realms/helpdesk/login-actions/authenticate?client_id=helpdesk-client&amp;tab_id=h2VGnFBfDaM&amp;client_data=eyJydSI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMC9hcGkvYXV0aC9jYWxsYmFjayIsInJ0IjoiY29kZSJ9",
         },
       };
     },
