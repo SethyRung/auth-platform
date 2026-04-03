@@ -134,11 +134,18 @@ public class AuthServiceImpl implements AuthService {
 
         JsonNode payload = decodeJwt(token);
         List<String> roles = new ArrayList<>();
-        JsonNode rolesNode = payload.path("realm_access").path("roles");
-        if (rolesNode.isArray()) {
-            for (JsonNode role : rolesNode) {
-                if (role.isTextual()) {
-                    roles.add(role.asText());
+
+        JsonNode resourceAccess = payload.path("resource_access");
+        if (resourceAccess.isObject()) {
+            JsonNode clientAccess = resourceAccess.path(clientId);
+            if (clientAccess.isObject()) {
+                JsonNode rolesNode = clientAccess.path("roles");
+                if (rolesNode.isArray()) {
+                    for (JsonNode role : rolesNode) {
+                        if (role.isTextual()) {
+                            roles.add(role.asText());
+                        }
+                    }
                 }
             }
         }
