@@ -1,5 +1,8 @@
 FROM quay.io/keycloak/keycloak:26.5
 
+# Copy custom theme
+COPY themes/auth-platform /opt/keycloak/themes/auth-platform
+
 ENV KC_HEALTH_ENABLED=true
 ENV KC_METRICS_ENABLED=true
 ENV KC_FEATURES=token-exchange

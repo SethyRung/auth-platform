@@ -9,8 +9,8 @@ Four services orchestrated via Docker Compose:
 | Service         | Technology                                | Port |
 | --------------- | ----------------------------------------- | ---- |
 | PostgreSQL      | 18-alpine                                 | 5432 |
-| Keycloak        | 26.5 (custom build)                       | 8080 |
-| Spring Boot API | 4.0.3 / Java 21                           | 8000 |
+| Keycloak        | 26.5 (custom build with Vue theme)        | 8080 |
+| Spring Boot API | 4.0.3 / Java 25                           | 8000 |
 | Vue 3 Web       | Vite + Vue 3 + Nuxt UI + Pinia + Tailwind | 5173 |
 
 PostgreSQL hosts two databases:
@@ -71,11 +71,22 @@ cd web
 pnpm install             # Install dependencies
 pnpm dev                 # Development server
 pnpm build               # Production build (includes type-check)
+pnpm keycloak            # Build + inject Keycloak theme
 pnpm lint                # Run oxlint
 pnpm lint:fix            # Auto-fix lint issues
 pnpm fmt                 # Format with oxfmt
 pnpm type-check          # TypeScript check only
 ```
+
+#### Keycloak Theme
+
+The Keycloak login pages use a custom Vue 3 + Nuxt UI theme. To customize:
+
+1. Edit components in `web/src/views/keycloak/` (LoginView, RegisterView, etc.)
+2. Run `pnpm keycloak` to build and inject the theme
+3. Restart Keycloak container to see changes
+
+Theme data flows from Keycloak → FreeMarker → `window.$kcData` → Vue app.
 
 ### Docker Commands
 

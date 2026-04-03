@@ -35,4 +35,12 @@ export default defineConfig({
       "@nuxt/ui > prosemirror-gapcursor",
     ],
   },
+  build: {
+    rolldownOptions: {
+      input: {
+        app: fileURLToPath(new URL("./index.html", import.meta.url)),
+        keycloak: fileURLToPath(new URL("./index-keycloak.html", import.meta.url)),
+      },
+    },
+  },
 });

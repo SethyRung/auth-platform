@@ -1,5 +1,16 @@
-import { createRouter, createWebHistory } from "vue-router";
+import { createRouter, createWebHistory, type RouteRecordRaw } from "vue-router";
 import { useAuthStore } from "@/stores/auth";
+
+const devRoutes: RouteRecordRaw[] =
+  import.meta.env.MODE === "development"
+    ? [
+        {
+          path: "/keycloak",
+          name: "keycloak",
+          component: () => import("@/views/KeycloakView.vue"),
+        },
+      ]
+    : [];
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -26,10 +37,15 @@ const router = createRouter({
         },
       ],
     },
+    ...devRoutes,
   ],
 });
 
 router.beforeEach(async (to, _from) => {
+  if (to.name === "keycloak") {
+    return true;
+  }
+
   const authStore = useAuthStore();
 
   try {
