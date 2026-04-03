@@ -6,7 +6,9 @@
         page: "register",
         realm: {
           name: "${realm.name}",
-          displayName: "${realm.displayName!'Auth Platform'}",
+          displayName: "${realm.displayName!'Auth Platform'}"
+        },
+        meta: {
           registrationEmailAsUsername: ${realm.registrationEmailAsUsername?c}
         },
         messages: {

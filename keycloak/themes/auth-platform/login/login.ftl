@@ -6,7 +6,9 @@
         page: "login",
         realm: {
           name: "${realm.name}",
-          displayName: "${realm.displayName!'Auth Platform'}",
+          displayName: "${realm.displayName!'Auth Platform'}"
+        },
+        meta: {
           rememberMe: ${realm.rememberMe?c},
           resetPasswordAllowed: ${(realm.password && realm.resetPasswordAllowed)?c},
           registrationAllowed: ${(realm.password && realm.registrationAllowed && !registrationDisabled??)?c}

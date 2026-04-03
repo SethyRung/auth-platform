@@ -95,7 +95,7 @@ function onSubmit(event: FormSubmitEvent<Schema>) {
       </UFormField>
 
       <UFormField
-        v-if="!kcData.realm.registrationEmailAsUsername"
+        v-if="!kcData.meta.registrationEmailAsUsername"
         :label="kcData.messages.username"
         name="username"
         required

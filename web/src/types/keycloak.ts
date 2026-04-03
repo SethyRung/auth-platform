@@ -1,12 +1,11 @@
 export interface KeycloakData {
-  page: "login" | "register" | "forgot-password" | "update-password" | "verify-email";
+  page: "login" | "register" | "forgot-password" | "update-password" | "verify-email" | "error";
   realm: {
     name: string;
     displayName: string;
-    rememberMe?: boolean;
-    resetPasswordAllowed?: boolean;
-    registrationAllowed?: boolean;
-    registrationEmailAsUsername?: boolean;
+  };
+  meta: {
+    [key: string]: unknown;
   };
   messages: Record<string, string>;
   errors: {

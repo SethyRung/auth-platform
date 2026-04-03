@@ -8,6 +8,7 @@
           name: "${realm.name}",
           displayName: "${realm.displayName!'Auth Platform'}"
         },
+        meta: {},
         messages: {
           passwordNew: "${msg('passwordNew')?js_string}",
           passwordConfirm: "${msg('passwordConfirm')?js_string}",

@@ -37,6 +37,8 @@ const items = computed<NavigationMenuItem[]>(() => [
         realm: {
           name: "auth-platform",
           displayName: "Helpdesk",
+        },
+        meta: {
           rememberMe: true,
           resetPasswordAllowed: true,
           registrationAllowed: true,
@@ -72,6 +74,8 @@ const items = computed<NavigationMenuItem[]>(() => [
         realm: {
           name: "auth-platform",
           displayName: "Helpdesk",
+        },
+        meta: {
           registrationEmailAsUsername: false,
         },
         messages: {
@@ -111,6 +115,7 @@ const items = computed<NavigationMenuItem[]>(() => [
           name: "helpdesk",
           displayName: "Helpdesk",
         },
+        meta: {},
         messages: {
           username: "Username or email",
           doSubmit: "Submit",
@@ -139,6 +144,7 @@ const items = computed<NavigationMenuItem[]>(() => [
           name: "helpdesk",
           displayName: "Helpdesk",
         },
+        meta: {},
         messages: {
           passwordNew: "New Password",
           passwordConfirm: "Confirm password",

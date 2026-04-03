@@ -88,13 +88,13 @@ function onSubmit(event: FormSubmitEvent<Schema>) {
         />
       </UFormField>
 
-      <div v-if="kcData.realm.rememberMe" class="flex items-center">
+      <div v-if="kcData.meta.rememberMe" class="flex items-center">
         <UCheckbox v-model="state.rememberMe" :label="kcData.messages.rememberMe" />
       </div>
 
       <UButton :label="kcData.messages.doLogin" size="xl" type="submit" block :loading="loading" />
 
-      <div v-if="kcData.realm.resetPasswordAllowed" class="text-center">
+      <div v-if="kcData.meta.resetPasswordAllowed" class="text-center">
         <a
           :href="kcData.urls.forgotPassword"
           class="text-sm text-primary-600 hover:text-primary-500 dark:text-primary-400 underline"
@@ -103,7 +103,7 @@ function onSubmit(event: FormSubmitEvent<Schema>) {
         </a>
       </div>
 
-      <div v-if="kcData.realm.registrationAllowed" class="text-center text-sm">
+      <div v-if="kcData.meta.registrationAllowed" class="text-center text-sm">
         <span class="text-gray-600 dark:text-gray-400"> Don't have an account? </span>
         <a
           :href="kcData.urls.register"

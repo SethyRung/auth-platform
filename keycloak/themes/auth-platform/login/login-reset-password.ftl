@@ -8,6 +8,7 @@
           name: "${realm.name}",
           displayName: "${realm.displayName!'Auth Platform'}"
         },
+        meta: {},
         messages: {
           username: "<#if !realm.loginWithEmailAllowed>${msg('username')?js_string}<#elseif !realm.registrationEmailAsUsername>${msg('usernameOrEmail')?js_string}<#else>${msg('email')?js_string}</#if>",
           doSubmit: "${msg('doSubmit')?js_string}",
