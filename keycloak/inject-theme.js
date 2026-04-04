@@ -10,7 +10,7 @@ const FAVICON_PATH_REPLACE = 'href="${url.resourcesPath}/vue/favicon.ico"';
 
 async function main() {
   const distPath = path.resolve(__dirname, "..", "web/dist");
-  const themePath = path.resolve(__dirname, "themes/auth-platform/login");
+  const themePath = path.resolve(__dirname, "themes/helpdesk/login");
 
   const indexHtml = await fs.readFile(path.join(distPath, "index-keycloak.html"), "utf-8");
 

@@ -1,7 +1,7 @@
 FROM quay.io/keycloak/keycloak:26.5
 
 # Copy custom theme
-COPY themes/auth-platform /opt/keycloak/themes/auth-platform
+COPY themes/helpdesk /opt/keycloak/themes/helpdesk
 
 ENV KC_HEALTH_ENABLED=true
 ENV KC_METRICS_ENABLED=true
