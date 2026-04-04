@@ -16,8 +16,8 @@
         },
         errors: {
           hasError: <#if messagesPerField.existsError('password','password-confirm')>true<#else>false</#if>,
-          password: "<#if messagesPerField.existsError('password')>${kcSanitize(messagesPerField.get('password'))?no_esc?js_string}</#if>",
-          passwordConfirm: "<#if messagesPerField.existsError('password-confirm')>${kcSanitize(messagesPerField.get('password-confirm'))?no_esc?js_string}</#if>"
+          password: "<#if messagesPerField.existsError('password')>${messagesPerField.get('password')?js_string}</#if>",
+          passwordConfirm: "<#if messagesPerField.existsError('password-confirm')>${messagesPerField.get('password-confirm')?js_string}</#if>"
         },
         urls: {
           updatePasswordAction: "${url.loginAction?js_string}"

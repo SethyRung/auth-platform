@@ -7,6 +7,7 @@ import RegisterView from "@/views/auth/RegisterView.vue";
 import ForgotPasswordView from "@/views/auth/ForgotPasswordView.vue";
 import UpdatePasswordView from "@/views/auth/UpdatePasswordView.vue";
 import VerifyEmailView from "@/views/auth/VerifyEmailView.vue";
+import ErrorView from "@/views/auth/ErrorView.vue";
 
 import type { NavigationMenuItem } from "@nuxt/ui";
 
@@ -25,6 +26,8 @@ const currentView = computed(() => {
       return UpdatePasswordView;
     case "verify-email":
       return VerifyEmailView;
+    case "error":
+      return ErrorView;
     default:
       return LoginView;
   }
@@ -38,7 +41,7 @@ const items = computed<NavigationMenuItem[]>(() => [
       kcData.value = {
         page: "login",
         realm: {
-          name: "auth-platform",
+          name: "helpdesk",
           displayName: "Helpdesk",
         },
         meta: {
@@ -54,16 +57,14 @@ const items = computed<NavigationMenuItem[]>(() => [
         },
         errors: {
           hasError: false,
-          username: "",
-          password: "",
         },
         urls: {
           loginAction:
-            "http://localhost:8080/realms/auth-platform/login-actions/authenticate?session_code=B_G4RIJEZICsOXKLbnZ-jZt3J3tJRZVFrFGXjfu8W8E&amp;execution=cfc4045b-5b0d-499f-a0b4-2a3bbe02ceea&amp;client_id=auth-platform-client&amp;tab_id=GSCHUqYrKjk&amp;client_data=eyJydSI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMC9hcGkvYXV0aC9jYWxsYmFjayIsInJ0IjoiY29kZSJ9",
+            "http://localhost:8080/realms/helpdesk/login-actions/authenticate?session_code=-2hDT4HgvVsByNw5JuC2yyVJO-dbKvXRMfqjBPdsC38&amp;execution=cfc4045b-5b0d-499f-a0b4-2a3bbe02ceea&amp;client_id=helpdesk-client&amp;tab_id=9zmss7yK7lk&amp;client_data=eyJydSI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMC9hcGkvYXV0aC9jYWxsYmFjayIsInJ0IjoiY29kZSJ9",
           forgotPassword:
-            "/realms/auth-platform/login-actions/reset-credentials?client_id=auth-platform-client&amp;tab_id=GSCHUqYrKjk&amp;client_data=eyJydSI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMC9hcGkvYXV0aC9jYWxsYmFjayIsInJ0IjoiY29kZSJ9",
+            "/realms/helpdesk/login-actions/reset-credentials?client_id=helpdesk-client&amp;tab_id=9zmss7yK7lk&amp;client_data=eyJydSI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMC9hcGkvYXV0aC9jYWxsYmFjayIsInJ0IjoiY29kZSJ9",
           register:
-            "/realms/auth-platform/login-actions/registration?client_id=auth-platform-client&amp;tab_id=GSCHUqYrKjk&amp;client_data=eyJydSI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMC9hcGkvYXV0aC9jYWxsYmFjayIsInJ0IjoiY29kZSJ9",
+            "/realms/helpdesk/login-actions/registration?client_id=helpdesk-client&amp;tab_id=9zmss7yK7lk&amp;client_data=eyJydSI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMC9hcGkvYXV0aC9jYWxsYmFjayIsInJ0IjoiY29kZSJ9",
         },
       };
     },
@@ -75,7 +76,7 @@ const items = computed<NavigationMenuItem[]>(() => [
       kcData.value = {
         page: "register",
         realm: {
-          name: "auth-platform",
+          name: "helpdesk",
           displayName: "Helpdesk",
         },
         meta: {
@@ -101,9 +102,9 @@ const items = computed<NavigationMenuItem[]>(() => [
         },
         urls: {
           registerAction:
-            "http://localhost:8080/realms/auth-platform/login-actions/registration?session_code=B_G4RIJEZICsOXKLbnZ-jZt3J3tJRZVFrFGXjfu8W8E&amp;execution=18fd358a-0cbd-4c0a-9104-cc52d4e22b19&amp;client_id=auth-platform-client&amp;tab_id=GSCHUqYrKjk&amp;client_data=eyJydSI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMC9hcGkvYXV0aC9jYWxsYmFjayIsInJ0IjoiY29kZSJ9",
+            "http://localhost:8080/realms/helpdesk/login-actions/registration?session_code=B_G4RIJEZICsOXKLbnZ-jZt3J3tJRZVFrFGXjfu8W8E&amp;execution=18fd358a-0cbd-4c0a-9104-cc52d4e22b19&amp;client_id=helpdesk-client&amp;tab_id=GSCHUqYrKjk&amp;client_data=eyJydSI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMC9hcGkvYXV0aC9jYWxsYmFjayIsInJ0IjoiY29kZSJ9",
           loginUrl:
-            "/realms/auth-platform/login-actions/authenticate?client_id=auth-platform-client&amp;tab_id=GSCHUqYrKjk&amp;client_data=eyJydSI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMC9hcGkvYXV0aC9jYWxsYmFjayIsInJ0IjoiY29kZSJ9",
+            "/realms/helpdesk/login-actions/authenticate?client_id=helpdesk-client&amp;tab_id=GSCHUqYrKjk&amp;client_data=eyJydSI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMC9hcGkvYXV0aC9jYWxsYmFjayIsInJ0IjoiY29kZSJ9",
         },
       };
     },
@@ -189,6 +190,31 @@ const items = computed<NavigationMenuItem[]>(() => [
             "http://localhost:8080/realms/helpdesk/login-actions/required-action?session_code=6tuoL_Nk1Dt2fgcKP5shjKvOuurHf6_uS4u-xD1FGFI&amp;execution=VERIFY_EMAIL&amp;client_id=helpdesk-client&amp;tab_id=h2VGnFBfDaM&amp;client_data=eyJydSI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMC9hcGkvYXV0aC9jYWxsYmFjayIsInJ0IjoiY29kZSJ9",
           loginUrl:
             "/realms/helpdesk/login-actions/authenticate?client_id=helpdesk-client&amp;tab_id=h2VGnFBfDaM&amp;client_data=eyJydSI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMC9hcGkvYXV0aC9jYWxsYmFjayIsInJ0IjoiY29kZSJ9",
+        },
+      };
+    },
+  },
+  {
+    label: "Error",
+    active: kcData.value?.page === "error",
+    onSelect: () => {
+      kcData.value = {
+        page: "error",
+        realm: {
+          name: "helpdesk",
+          displayName: "Helpdesk",
+        },
+        meta: {},
+        messages: {
+          backToLogin: "Back to login",
+        },
+        errors: {
+          hasError: true,
+          title: "Access Denied",
+          description: "You do not have permission to access this resource.",
+        },
+        urls: {
+          loginUrl: "/realms/helpdesk/login-actions/authenticate?client_id=helpdesk-client",
         },
       };
     },

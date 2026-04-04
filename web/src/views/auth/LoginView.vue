@@ -62,9 +62,10 @@ function onSubmit(event: FormSubmitEvent<Schema>) {
 
     <UAlert
       v-if="kcData.errors.hasError"
+      icon="i-lucide:alert-triangle"
+      :title="String(kcData.errors.username || kcData.errors.password || 'Invalid credentials')"
       color="error"
       variant="soft"
-      :title="String(kcData.errors.username || kcData.errors.password || 'Invalid credentials')"
       class="mb-4"
     />
 

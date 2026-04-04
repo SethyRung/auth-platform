@@ -58,9 +58,10 @@ function onSubmit(event: FormSubmitEvent<Schema>) {
 
     <UAlert
       v-if="kcData.errors.hasError"
+      icon="i-lucide:alert-triangle"
+      :title="String(kcData.errors.username || 'An error occurred')"
       color="error"
       variant="soft"
-      :title="String(kcData.errors.username || 'An error occurred')"
       class="mb-4"
     />
 

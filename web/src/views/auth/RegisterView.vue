@@ -75,9 +75,10 @@ function onSubmit(event: FormSubmitEvent<Schema>) {
 
     <UAlert
       v-if="kcData.errors.hasError"
+      icon="i-lucide:alert-triangle"
+      title="Please fix the errors below"
       color="error"
       variant="soft"
-      title="Please fix the errors below"
       class="mb-4"
     />
 

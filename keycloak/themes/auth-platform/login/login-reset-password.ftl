@@ -15,7 +15,7 @@
         },
         errors: {
           hasError: <#if messagesPerField.existsError('username')>true<#else>false</#if>,
-          username: "<#if messagesPerField.existsError('username')>${kcSanitize(messagesPerField.get('username'))?no_esc?js_string}</#if>"
+          username: "<#if messagesPerField.existsError('username')>${messagesPerField.get('username')?js_string}</#if>"
         },
         urls: {
           resetPasswordAction: "${url.loginAction?js_string}",

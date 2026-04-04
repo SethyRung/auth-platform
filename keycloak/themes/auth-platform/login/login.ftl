@@ -21,8 +21,8 @@
         },
         errors: {
           hasError: <#if messagesPerField.existsError('username','password')>true<#else>false</#if>,
-          username: "<#if messagesPerField.existsError('username')>${kcSanitize(messagesPerField.get('username'))?no_esc?js_string}</#if>",
-          password: "<#if messagesPerField.existsError('password')>${kcSanitize(messagesPerField.get('password'))?no_esc?js_string}</#if>"
+          username: "<#if messagesPerField.existsError('username')>${messagesPerField.get('username')?js_string}</#if>",
+          password: "<#if messagesPerField.existsError('password')>${messagesPerField.get('password')?js_string}</#if>"
         },
         urls: {
           loginAction: "${url.loginAction?js_string}",

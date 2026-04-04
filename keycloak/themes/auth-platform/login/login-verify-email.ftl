@@ -15,7 +15,7 @@
         },
         errors: {
           hasError: <#if messagesPerField.existsError('email','userEmail')>true<#else>false</#if>,
-          message: "<#if messagesPerField.existsError('email','userEmail')>${kcSanitize(messagesPerField.getFirst('email','userEmail'))?no_esc?js_string}</#if>"
+          message: "<#if messagesPerField.existsError('email','userEmail')>${messagesPerField.getFirst('email','userEmail')?js_string}</#if>"
         },
         urls: {
           resendEmailAction: "${url.loginAction?js_string}",

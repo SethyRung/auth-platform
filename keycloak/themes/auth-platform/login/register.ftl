@@ -22,12 +22,12 @@
         },
         errors: {
           hasError: <#if messagesPerField.existsError('firstName','lastName','email','username','password','password-confirm')>true<#else>false</#if>,
-          firstName: "<#if messagesPerField.existsError('firstName')>${kcSanitize(messagesPerField.get('firstName'))?no_esc?js_string}</#if>",
-          lastName: "<#if messagesPerField.existsError('lastName')>${kcSanitize(messagesPerField.get('lastName'))?no_esc?js_string}</#if>",
-          email: "<#if messagesPerField.existsError('email')>${kcSanitize(messagesPerField.get('email'))?no_esc?js_string}</#if>",
-          username: "<#if messagesPerField.existsError('username')>${kcSanitize(messagesPerField.get('username'))?no_esc?js_string}</#if>",
-          password: "<#if messagesPerField.existsError('password')>${kcSanitize(messagesPerField.get('password'))?no_esc?js_string}</#if>",
-          passwordConfirm: "<#if messagesPerField.existsError('password-confirm')>${kcSanitize(messagesPerField.get('password-confirm'))?no_esc?js_string}</#if>"
+          firstName: "<#if messagesPerField.existsError('firstName')>${messagesPerField.get('firstName')?js_string}</#if>",
+          lastName: "<#if messagesPerField.existsError('lastName')>${messagesPerField.get('lastName')?js_string}</#if>",
+          email: "<#if messagesPerField.existsError('email')>${messagesPerField.get('email')?js_string}</#if>",
+          username: "<#if messagesPerField.existsError('username')>${messagesPerField.get('username')?js_string}</#if>",
+          password: "<#if messagesPerField.existsError('password')>${messagesPerField.get('password')?js_string}</#if>",
+          passwordConfirm: "<#if messagesPerField.existsError('password-confirm')>${messagesPerField.get('password-confirm')?js_string}</#if>"
         },
         urls: {
           registerAction: "${url.registrationAction?js_string}",
