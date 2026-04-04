@@ -69,7 +69,7 @@ const userMenuItems = ref<NavigationMenuItem[]>([
   {
     label: "GitHub",
     icon: "i-simple-icons:github",
-    to: "https://github.com/SethyRung/auth-platform",
+    to: "https://github.com/SethyRung/helpdesk",
     target: "_blank",
   },
   {
